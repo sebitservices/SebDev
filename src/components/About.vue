@@ -21,14 +21,13 @@
             <div class="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-2xl blur-xl opacity-20 animate-pulse"></div>
             <div class="relative rounded-2xl overflow-hidden border-2 border-emerald-500/20 bg-gray-800/50 backdrop-blur-sm">
               <img 
-                :src="profileImage.src" 
+                :src="profileImage.currentSrc"
                 :alt="profileImage.alt"
                 :width="profileImage.width"
                 :height="profileImage.height"
                 loading="lazy"
                 decoding="async"
                 @error="handleImageError"
-                fetchpriority="high"
                 class="w-full h-auto rounded-xl shadow-lg custom-transition transform hover:scale-105"
               >
             </div>
@@ -187,13 +186,17 @@
 </template>
 
 <script>
+import SebDevImage from '../../public/assets/img/SebDev.webp';
+import SpImage from '../../public/assets/img/sp.webp';
+
 export default {
   name: 'About',
   data() {
     return {
       profileImage: {
-        src: '/public/assets/img/SebDev.webp',
-        fallbackSrc: '/public/assets/img/sp.webp',
+        currentSrc: SebDevImage,
+        mainSrc: SebDevImage,
+        fallbackSrc: SpImage,
         width: 400,
         height: 400,
         alt: 'Foto de perfil de Sebastian Pizarro'
@@ -203,24 +206,22 @@ export default {
   methods: {
     handleImageError(e) {
       console.error('Error cargando imagen:', e.target.src);
-      e.target.src = this.profileImage.fallbackSrc;
       
-      // Si también falla el fallback, mostrar un placeholder
-      e.target.onerror = () => {
-        console.error('Error cargando imagen de fallback');
-        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 24 24"%3E%3Cpath fill="%234ade80" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/%3E%3C/svg%3E';
-      };
+      if (this.profileImage.currentSrc === this.profileImage.mainSrc) {
+        // Si falla la imagen principal, intentar con el fallback
+        this.profileImage.currentSrc = this.profileImage.fallbackSrc;
+      } else {
+        // Si también falla el fallback, usar placeholder
+        this.profileImage.currentSrc = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 24 24"%3E%3Cpath fill="%234ade80" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/%3E%3C/svg%3E';
+      }
     }
   },
   mounted() {
-    // Precarga de imágenes
-    const preloadImage = (src) => {
+    // Precargar imágenes
+    [this.profileImage.mainSrc, this.profileImage.fallbackSrc].forEach(src => {
       const img = new Image();
       img.src = src;
-    };
-    
-    preloadImage(this.profileImage.src);
-    preloadImage(this.profileImage.fallbackSrc);
+    });
   }
 }
 </script>
