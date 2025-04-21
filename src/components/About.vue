@@ -192,8 +192,8 @@ export default {
   data() {
     return {
       profileImage: {
-        src: '/assets/img/SebDev.webp',
-        fallbackSrc: '/assets/img/sp.webp',
+        src: '/public/assets/img/SebDev.webp',
+        fallbackSrc: '/public/assets/img/sp.webp',
         width: 400,
         height: 400,
         alt: 'Foto de perfil de Sebastian Pizarro'
@@ -202,8 +202,25 @@ export default {
   },
   methods: {
     handleImageError(e) {
+      console.error('Error cargando imagen:', e.target.src);
       e.target.src = this.profileImage.fallbackSrc;
+      
+      // Si también falla el fallback, mostrar un placeholder
+      e.target.onerror = () => {
+        console.error('Error cargando imagen de fallback');
+        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 24 24"%3E%3Cpath fill="%234ade80" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/%3E%3C/svg%3E';
+      };
     }
+  },
+  mounted() {
+    // Precarga de imágenes
+    const preloadImage = (src) => {
+      const img = new Image();
+      img.src = src;
+    };
+    
+    preloadImage(this.profileImage.src);
+    preloadImage(this.profileImage.fallbackSrc);
   }
 }
 </script>
