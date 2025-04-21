@@ -30,10 +30,6 @@
                 @error="handleImageError"
                 fetchpriority="high"
                 class="w-full h-auto rounded-xl shadow-lg custom-transition transform hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 400px"
-                srcset="/assets/img/SebDev-sm.webp 300w,
-                        /assets/img/SebDev-md.webp 400w,
-                        /assets/img/SebDev.webp 800w"
               >
             </div>
           </div>
@@ -197,10 +193,10 @@ export default {
     return {
       profileImage: {
         src: '/assets/img/SebDev.webp',
-        alt: 'Sebastián Peña - Desarrollador Web Full Stack',
+        fallbackSrc: '/assets/img/sp.webp',
         width: 400,
         height: 400,
-        fallbackSrc: '/assets/img/sp.webp'
+        alt: 'Foto de perfil de Sebastian Pizarro'
       }
     }
   },

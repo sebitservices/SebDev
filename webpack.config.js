@@ -15,7 +15,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: isDev ? '[name].js' : '[name].[contenthash].js',
-    publicPath: isDev ? '/' : './',
+    publicPath: '/',
     clean: true
   },
   module: {
@@ -61,7 +61,7 @@ module.exports = {
           }
         },
         generator: {
-          filename: 'assets/img/[name].[hash][ext]'
+          filename: 'assets/img/[name][ext]'
         }
       },
       {
