@@ -15,7 +15,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: isDev ? '[name].js' : '[name].[contenthash].js',
-    publicPath: '/',
+    publicPath: isDev ? '/' : './',
     clean: true
   },
   module: {
