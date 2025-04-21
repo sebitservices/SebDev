@@ -38,6 +38,7 @@
               :sizes="projects[0].image.sizes"
               :srcset="projects[0].image.srcset"
               @load="handleImageLoad(projects[0].id)"
+              @error="handleImageError(projects[0])"
             >
             <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500"></div>
           </div>
@@ -86,6 +87,7 @@
               :sizes="projects[1].image.sizes"
               :srcset="projects[1].image.srcset"
               @load="handleImageLoad(projects[1].id)"
+              @error="handleImageError(projects[1])"
             >
             <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500"></div>
           </div>
@@ -135,6 +137,7 @@
               :sizes="projects[2].image.sizes"
               :srcset="projects[2].image.srcset"
               @load="handleImageLoad(projects[2].id)"
+              @error="handleImageError(projects[2])"
             >
             <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent opacity-90 group-hover:opacity-75 transition-opacity duration-500"></div>
           </div>
@@ -168,6 +171,10 @@
 </template>
 
 <script>
+import TaskMasterImage from '../../public/assets/img/taskMaster.webp';
+import ClimaImage from '../../public/assets/img/clima.webp';
+import SebitservicesImage from '../../public/assets/img/sebitservices.webp';
+
 export default {
   name: 'Projects',
   data() {
@@ -178,12 +185,11 @@ export default {
           id: 1,
           name: 'TaskMaster',
           image: {
-            src: '/assets/img/taskMaster.webp',
+            src: TaskMasterImage,
             alt: 'TaskMaster App - Aplicación de gestión de tareas',
             width: 800,
             height: 400,
-            sizes: '100vw',
-            srcset: '/assets/img/taskMaster.webp'
+            sizes: '100vw'
           },
           description: 'Aplicación de gestión de tareas con autenticación y persistencia de datos.',
           technologies: ['Vue.js', 'TailwindCSS', 'Firebase'],
@@ -194,32 +200,31 @@ export default {
           id: 2,
           name: 'Buscador de Clima',
           image: {
-            src: '/assets/img/clima.webp',
+            src: ClimaImage,
             alt: 'Buscador de Clima - Aplicación meteorológica',
             width: 600,
             height: 300,
-            sizes: '100vw',
-            srcset: '/assets/img/clima.webp'
+            sizes: '100vw'
           },
-          description: 'Aplicación web para consultar el clima en tiempo real.',
-          technologies: ['HTML', 'TailwindCSS'],
-          githubUrl: 'https://github.com/sebitservices/clima-buscador'
+          description: 'Aplicación web para consultar el clima actual y pronóstico de cualquier ciudad.',
+          technologies: ['Vue.js', 'TailwindCSS', 'OpenWeather API'],
+          demoUrl: 'https://clima-sebitservices.vercel.app/',
+          githubUrl: 'https://github.com/sebitservices/clima'
         },
         {
           id: 3,
-          name: 'Sebitservices',
+          name: 'Sebitservices Website',
           image: {
-            src: '/assets/img/sebitservices.webp',
+            src: SebitservicesImage,
             alt: 'Sebitservices Website - Sitio web corporativo',
             width: 1200,
             height: 600,
-            sizes: '100vw',
-            srcset: '/assets/img/sebitservices.webp'
+            sizes: '100vw'
           },
           description: 'Sitio web corporativo con diseño moderno y responsive.',
-          technologies: ['Astro', 'TailwindCSS'],
+          technologies: ['Vue.js', 'TailwindCSS', 'Vercel'],
           demoUrl: 'https://sebitservices.cl',
-          githubUrl: 'https://github.com/sebitservices/sebitservices-web'
+          githubUrl: 'https://github.com/sebitservices/sebitservices'
         }
       ]
     }
@@ -231,8 +236,30 @@ export default {
     });
   },
   methods: {
-    handleImageLoad(projectId) {
-      this.$set(this.imageLoaded, projectId, true);
+    handleImageLoad(id) {
+      this.imageLoaded[id] = true;
+    },
+    handleImageError(project) {
+      console.error(`Error cargando imagen para ${project.name}`);
+      // Mostrar un placeholder con el nombre del proyecto
+      const canvas = document.createElement('canvas');
+      canvas.width = project.image.width;
+      canvas.height = project.image.height;
+      const ctx = canvas.getContext('2d');
+      
+      // Dibujar fondo
+      ctx.fillStyle = '#1f2937';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Dibujar texto
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 24px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(project.name, canvas.width / 2, canvas.height / 2);
+      
+      // Actualizar la imagen
+      project.image.src = canvas.toDataURL();
     }
   }
 }
